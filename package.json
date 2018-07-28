@@ -17,8 +17,14 @@
 		"theme": "dark"
 	},
 	"activationEvents": [
-		"onLanguage:markdown"
+		"onLanguage:markdown", "*"
 	],
+    "contributes": {
+        "commands": [{
+            "command": "extension.SetNewLanguage",
+            "title": "SetNewLanguage"
+        }]
+    },
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Microsoft/vscode-wordcount.git"

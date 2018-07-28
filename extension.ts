@@ -2,6 +2,26 @@
 // Import the module and reference it with the alias vscode in your code below
 import {window, workspace, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
 
+var dev_log = null;
+
+function dbg_log(msg) {
+    if (!dev_log) {
+        dev_log = window.createOutputChannel("hello_world_dev");
+    }
+    dev_log.show();
+    dev_log.appendLine(msg);
+}
+
+
+function set_new_language() {
+    var handle_success = function(language_id) { dbg_log('got language_id: ' + language_id); }
+    var handle_failure = function(reason) { dbg_log('Unable to create input box: ' + reason); };
+    var input_box_props = {"ignoreFocusOut": true, "prompt": 'enter new language id'};
+    window.showInputBox(input_box_props).then(handle_success, handle_failure);
+}
+
+
+
 // this method is called when your extension is activated. activation is
 // controlled by the activation events defined in package.json
 export function activate(ctx: ExtensionContext) {
@@ -13,11 +33,13 @@ export function activate(ctx: ExtensionContext) {
     // create a new word counter
     let wordCounter = new WordCounter();
     let controller = new WordCounterController(wordCounter);
+    var set_lang_cmd = commands.registerCommand('extension.SetNewLanguage', set_new_language);
 
     // add to a list of disposables which are disposed when this extension
     // is deactivated again.
     ctx.subscriptions.push(controller);
     ctx.subscriptions.push(wordCounter);
+    ctx.subscriptions.push(set_lang_cmd);
 }
 
 export class WordCounter {
