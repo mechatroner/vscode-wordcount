@@ -21,8 +21,8 @@
 	],
     "contributes": {
         "commands": [{
-            "command": "extension.SetNewLanguage",
-            "title": "SetNewLanguage"
+            "command": "extension.WCSetNewLanguage",
+            "title": "WCSetNewLanguage"
         }]
     },
 	"repository": {

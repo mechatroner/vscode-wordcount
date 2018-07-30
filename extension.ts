@@ -1,5 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
+
 import {window, workspace, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument} from 'vscode';
 
 var dev_log = null;
@@ -12,12 +13,38 @@ function dbg_log(msg) {
     dev_log.appendLine(msg);
 }
 
+var active_doc_before = null;
+var active_editor_before = null;
+
+function after_lang_change() {
+    let editor = window.activeTextEditor;
+    let active_doc = editor.document;
+    if (editor == active_editor_before) {
+        dbg_log('same editor');
+    } else {
+        dbg_log('different editor');
+    }
+    if (active_doc == active_doc_before) {
+        dbg_log('same doc');
+    } else {
+        dbg_log('different doc');
+    }
+}
+
+function handle_new_lang(language_id) {
+    let editor = window.activeTextEditor;
+    let active_doc = editor.document;
+    active_doc_before = active_doc;
+    active_editor_before = editor;
+    editor.setLanguageById(language_id);
+    setTimeout(after_lang_change, 2000);
+}
+
 
 function set_new_language() {
-    var handle_success = function(language_id) { dbg_log('got language_id: ' + language_id); }
     var handle_failure = function(reason) { dbg_log('Unable to create input box: ' + reason); };
     var input_box_props = {"ignoreFocusOut": true, "prompt": 'enter new language id'};
-    window.showInputBox(input_box_props).then(handle_success, handle_failure);
+    window.showInputBox(input_box_props).then(handle_new_lang, handle_failure);
 }
 
 
@@ -33,7 +60,7 @@ export function activate(ctx: ExtensionContext) {
     // create a new word counter
     let wordCounter = new WordCounter();
     let controller = new WordCounterController(wordCounter);
-    var set_lang_cmd = commands.registerCommand('extension.SetNewLanguage', set_new_language);
+    var set_lang_cmd = commands.registerCommand('extension.WCSetNewLanguage', set_new_language);
 
     // add to a list of disposables which are disposed when this extension
     // is deactivated again.
