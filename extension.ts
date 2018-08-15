@@ -32,26 +32,6 @@ function after_lang_change() {
 }
 
 
-function editor_set_by_id(language_id) {
-    let editor = window.activeTextEditor;
-    let active_doc = editor.document;
-    active_doc_before = active_doc;
-    active_editor_before = editor;
-    editor.setLanguageById(language_id);
-    setTimeout(after_lang_change, 2000);
-}
-
-
-function editor_set_by_name(language_name) {
-    let editor = window.activeTextEditor;
-    let active_doc = editor.document;
-    active_doc_before = active_doc;
-    active_editor_before = editor;
-    editor.setLanguageByName(language_name);
-    setTimeout(after_lang_change, 2000);
-}
-
-
 function language_set_by_id(language_id) {
     let editor = window.activeTextEditor;
     let active_doc = editor.document;
@@ -65,24 +45,10 @@ function language_set_by_id(language_id) {
 }
 
 
-function handle_new_lang(language_id) {
-    var [op_type, lang] = language_id.split(':');
-    if (op_type == 'id') {
-        editor_set_by_id(lang);
-    } else if (op_type == 'name') {
-        editor_set_by_name(lang);
-    } else if (op_type == 'lang_id') {
-        language_set_by_id(lang);
-    } else {
-        dbg_log('unknown operation type: ' + op_type);
-    }
-}
-
-
 function set_new_language() {
     var handle_failure = function(reason) { dbg_log('Unable to create input box: ' + reason); };
     var input_box_props = {"ignoreFocusOut": true, "prompt": 'enter new language id'};
-    window.showInputBox(input_box_props).then(handle_new_lang, handle_failure);
+    window.showInputBox(input_box_props).then(language_set_by_id, handle_failure);
 }
 
 
